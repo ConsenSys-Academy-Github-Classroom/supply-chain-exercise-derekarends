@@ -52,8 +52,8 @@ contract SupplyChain {
 
   modifier checkValue(uint _sku) {
     _;
-    uint _price = items[_sku].price;
-    uint amountToRefund = msg.value - _price;
+    uint amountToRefund = msg.value - items[_sku].price;
+    require(amountToRefund <= msg.value, "Refund is invalid");
     (bool success, ) = items[_sku].buyer.call.value(amountToRefund)("");
     require(success, "Failed to refund");
   }
@@ -93,8 +93,8 @@ contract SupplyChain {
      buyer: address(0)
     });
     
-    skuCount = skuCount + 1;
     emit LogForSale(skuCount);
+    skuCount = skuCount + 1;
     return true;
   }
 
